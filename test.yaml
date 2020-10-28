@@ -1,0 +1,166 @@
+---
+openapi: 3.0.2
+info:
+  title: test
+  version: 1.0.0
+paths:
+  /people:
+    summary: Path used to manage the list of people.
+    description: The REST endpoint/path used to list and create zero or more `Person`
+      entities.  This path contains a `GET` and `POST` operation to perform the list
+      and create tasks, respectively.
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Person'
+          description: Successful response - returns an array of `Person` entities.
+      operationId: getpeople
+      summary: List All people
+      description: Gets a list of all `Person` entities.
+    post:
+      requestBody:
+        description: A new `Person` to be created.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Person'
+        required: true
+      responses:
+        "201":
+          description: Successful response.
+      operationId: createPerson
+      summary: Create a Person
+      description: Creates a new instance of a `Person`.
+  /people/{personId}:
+    summary: Path used to manage a single Person.
+    description: The REST endpoint/path used to get, update, and delete single instances
+      of an `Person`.  This path contains `GET`, `PUT`, and `DELETE` operations used
+      to perform the get, update, and delete tasks, respectively.
+    get:
+      responses:
+        "200":
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person'
+          description: Successful response - returns a single `Person`.
+      operationId: getPerson
+      summary: Get a Person
+      description: Gets the details of a single instance of a `Person`.
+    put:
+      requestBody:
+        description: Updated `Person` information.
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Person'
+        required: true
+      responses:
+        "202":
+          description: Successful response.
+      operationId: updatePerson
+      summary: Update a Person
+      description: Updates an existing `Person`.
+    delete:
+      responses:
+        "204":
+          description: Successful response.
+      operationId: deletePerson
+      summary: Delete a Person
+      description: Deletes an existing `Person`.
+    parameters:
+      - name: personId
+        description: A unique identifier for a `Person`.
+        schema:
+          type: string
+        in: path
+        required: true
+components:
+  schemas:
+    Person:
+      title: Root Type for Person
+      description: A Person type
+      required:
+        - age
+        - friends
+        - prop1
+      type: object
+      properties:
+        name:
+          description: Name
+          type: string
+        age:
+          description: Age
+          type: integer
+        gender:
+          description: Gender
+          enum:
+            - male
+            - female
+            - other
+          type: string
+        address:
+          description: Address
+          type: array
+          items:
+            $ref: '#/components/schemas/Address'
+        friends:
+          description: friends desc
+          type: array
+          items:
+            type: string
+        prop1:
+          description: ""
+          type: boolean
+        prop2:
+          format: date
+          description: date type
+          type: string
+        prop3:
+          format: double
+          description: number prop
+          type: number
+      example:
+        name: Person Name
+    Address:
+      description: Address
+      type: object
+      allOf:
+        - required:
+            - line1
+          type: object
+          properties:
+            line1:
+              description: Line1
+              type: string
+            pin:
+              $ref: '#/components/schemas/CustomScaler'
+              description: Custom Scaler
+            e_scalar:
+              $ref: '#/components/schemas/ScalarEnum'
+              description: Some Scalar Enum
+        - $ref: '#/components/schemas/Extendable'
+    CustomScaler:
+      description: ""
+      type: integer
+    ScalarEnum:
+      description: Scalar Enum
+      enum:
+        - value1
+        - value2
+      type: string
+      example: '"value2"'
+    Extendable:
+      title: Root Type for Extendable
+      description: ""
+      type: object
+      properties:
+        ext_property:
+          type: string
+      example:
+        ext_property: ex1
