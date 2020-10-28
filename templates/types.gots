@@ -11,7 +11,7 @@ export interface {{ classFromRef .Ref }}{{if gt (len .Value.AllOf) 0}} extends {
 {{ range getEnums . }}
 export namespace {{classFromRef .ClassName}} {
     {{- $ln := len .Values }}{{ $enm := title .EnumName}}
-    export type {{title .EnumName}}Enum = {{range $i, $v := .Values}}'{{.}}' {{ if nli $i $ln }}| {{end}}{{end}};
+    export type {{title .EnumName}}Enum = {{range $i, $v := .Values}}'{{.}}'{{ if nli $i $ln }} | {{end}}{{end}};
     export const {{title .EnumName}}Enum = {
     {{- range $i, $v := .Values}}
         {{title .}}: '{{.}}' as {{$enm}}Enum{{ if nli $i $ln }},{{end}}
@@ -25,7 +25,7 @@ export namespace {{classFromRef .ClassName}} {
 export type {{ classFromRef .Ref }} = {{scalarType . }};
 {{- else}}
 {{ $ln := len .Value.Enum -}}
-export type {{ classFromRef .Ref }} = {{range $i, $v := .Value.Enum}}'{{.}}' {{ if nli $i $ln }}| {{end}}{{end}};
+export type {{ classFromRef .Ref }} = {{range $i, $v := .Value.Enum}}'{{.}}'{{ if nli $i $ln }} | {{end}}{{end}};
 export const {{ classFromRef .Ref }} = {
     {{- range $i, $v := .Value.Enum }}
     {{title .}}: '{{.}}' as {{ classFromRef $.Ref }}{{ if nli $i $ln }},{{end}}

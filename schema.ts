@@ -36,7 +36,7 @@ export interface Person {
 }
 
 export namespace Person {
-    export type GenderEnum = 'male' | 'female' | 'other' ;
+    export type GenderEnum = 'male' | 'female' | 'other';
     export const GenderEnum = {
         Male: 'male' as GenderEnum,
         Female: 'female' as GenderEnum,
@@ -44,7 +44,7 @@ export namespace Person {
     };
 }
 
-export type ScalarEnum = 'value1' | 'value2' ;
+export type ScalarEnum = 'value1' | 'value2';
 export const ScalarEnum = {
     Value1: 'value1' as ScalarEnum,
     Value2: 'value2' as ScalarEnum
