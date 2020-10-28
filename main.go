@@ -1,6 +1,3 @@
-// This is a tool generated file
-// please dont edit it
-
 package main
 
 import (
@@ -13,7 +10,7 @@ import (
 
 func main() {
 	fMap := registerFunc()
-	t, err := template.New("types").Funcs(fMap).ParseFiles("templates/schema.gots")
+	t, err := template.New("types").Funcs(fMap).ParseGlob("templates/*.gots")
 	if err != nil {
 		panic(err)
 	}
@@ -27,21 +24,8 @@ func main() {
 		panic(err)
 	}
 	defer file.Close()
-	for name, ref := range swagger.Components.Schemas {
-		ref.Ref = "#/components/schemas/" + name
-		if ref.Value != nil {
-			var name string
-			if ref.Value.Type == "object" {
-				name = "object-type"
-			} else {
-				name = "scalar-type"
-			}
-			err = t.ExecuteTemplate(file, name, ref)
-			if err != nil {
-				panic(err)
-			}
-		}
-	}
+
+	err = t.ExecuteTemplate(file, "schema", swagger)
 
 }
 
@@ -55,7 +39,18 @@ func registerFunc() template.FuncMap {
 	fMap["classFromRef"] = classFromRef
 	fMap["nli"] = notLastIndex
 	fMap["isEnum"] = isEnum
+	fMap["schemas"] = schemas
 	return fMap
+}
+
+func schemas(scm map[string]*openapi3.SchemaRef) (ret []*openapi3.SchemaRef) {
+	if scm != nil {
+		for name, ref := range scm {
+			ref.Ref = "#/components/schemas/" + name
+			ret = append(ret, ref)
+		}
+	}
+	return
 }
 
 func isEnum(scr *openapi3.SchemaRef) bool {
@@ -101,11 +96,6 @@ func getType(scr *openapi3.SchemaRef) string {
 			return fmt.Sprintf("Array<%s>", getType(sc.Items))
 		case "integer":
 			return "number"
-		//case "string":
-		//	if len(sc.Enum) > 0 {
-		//		return "enumtobedone"
-		//	}
-		//	fallthrough
 		default:
 			return sc.Type
 		}

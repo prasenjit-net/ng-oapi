@@ -1,0 +1,35 @@
+{{ define "object-type" }}
+{{ $cName := classFromRef .Ref }}{{ $prop := .Value.Properties -}}
+export interface {{ classFromRef .Ref }}{{if gt (len .Value.AllOf) 0}} extends {{end}}{{range .Value.AllOf}}{{if gt (len .Ref) 0}}{{classFromRef .Ref}}{{else}}{{ $propAll := .Value.Properties}}{{end}}{{end}} {
+    {{- range $key, $val := $prop}}
+    {{ $key }}{{ reqProp $.Value $key }}: {{if and (isEnum $val) (eq (len $val.Ref) 0)}}{{ $cName }}.{{title $key}}Enum{{else}}{{ getType $val }}{{end}};
+    {{- end }}
+    {{- if gt (len .Value.AllOf) 0}}{{range .Value.AllOf}}{{if eq (len .Ref) 0 }}{{ range $key, $val := .Value.Properties}}
+    {{ $key }}{{ reqProp $.Value $key }}: {{if and (isEnum $val) (eq (len $val.Ref) 0)}}{{ $cName }}.{{title $key}}Enum{{else}}{{ getType $val }}{{end}};
+    {{- end }}{{ end }}{{end}}{{ end }}
+}
+{{ range getEnums . }}
+export namespace {{classFromRef .ClassName}} {
+    {{- $ln := len .Values }}{{ $enm := title .EnumName}}
+    export type {{title .EnumName}}Enum = {{range $i, $v := .Values}}'{{.}}' {{ if nli $i $ln }}| {{end}}{{end}};
+    export const {{title .EnumName}}Enum = {
+    {{- range $i, $v := .Values}}
+        {{title .}}: '{{.}}' as {{$enm}}Enum{{ if nli $i $ln }},{{end}}
+    {{- end}}
+    };
+}
+{{ end }}{{ end }}
+
+{{ define "scalar-type" }}
+{{- if not (isEnum .) }}
+export type {{ classFromRef .Ref }} = {{scalarType . }};
+{{- else}}
+{{ $ln := len .Value.Enum -}}
+export type {{ classFromRef .Ref }} = {{range $i, $v := .Value.Enum}}'{{.}}' {{ if nli $i $ln }}| {{end}}{{end}};
+export const {{ classFromRef .Ref }} = {
+    {{- range $i, $v := .Value.Enum }}
+    {{title .}}: '{{.}}' as {{ classFromRef $.Ref }}{{ if nli $i $ln }},{{end}}
+    {{- end }}
+};
+{{- end }}
+{{ end }}
