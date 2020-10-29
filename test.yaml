@@ -2,8 +2,8 @@
 openapi: 3.0.2
 info:
   title: test
-  description: A simple spec description
   version: 1.0.0
+  description: Some Description of the SPEC
 paths:
   /people:
     summary: Path used to manage the list of people.
@@ -75,21 +75,21 @@ paths:
       summary: Delete a Person
       description: Deletes an existing `Person`.
     parameters:
-      - name: personId
-        description: A unique identifier for a `Person`.
-        schema:
-          type: string
-        in: path
-        required: true
+    - name: personId
+      description: A unique identifier for a `Person`.
+      schema:
+        type: string
+      in: path
+      required: true
 components:
   schemas:
     Person:
       title: Root Type for Person
       description: A Person type
       required:
-        - age
-        - friends
-        - prop1
+      - age
+      - friends
+      - prop1
       type: object
       properties:
         name:
@@ -101,9 +101,9 @@ components:
         gender:
           description: Gender
           enum:
-            - male
-            - female
-            - other
+          - male
+          - female
+          - other
           type: string
         address:
           description: Address
@@ -132,28 +132,28 @@ components:
       description: Address
       type: object
       allOf:
-        - required:
-            - line1
-          type: object
-          properties:
-            line1:
-              description: Line1
-              type: string
-            pin:
-              $ref: '#/components/schemas/CustomScaler'
-              description: Custom Scaler
-            e_scalar:
-              $ref: '#/components/schemas/ScalarEnum'
-              description: Some Scalar Enum
-        - $ref: '#/components/schemas/Extendable'
+      - required:
+        - line1
+        type: object
+        properties:
+          line1:
+            description: Line1
+            type: string
+          pin:
+            $ref: '#/components/schemas/CustomScaler'
+            description: Custom Scaler
+          e_scalar:
+            $ref: '#/components/schemas/ScalarEnum'
+            description: Some Scalar Enum
+      - $ref: '#/components/schemas/Extendable'
     CustomScaler:
       description: ""
       type: integer
     ScalarEnum:
       description: Scalar Enum
       enum:
-        - value1
-        - value2
+      - value1
+      - value2
       type: string
       example: '"value2"'
     Extendable:
